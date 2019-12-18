@@ -13,6 +13,7 @@ class VerificationCodeNotification extends Notification
     use Queueable;
 
     public $code;
+    public $hashed;
 
     /**
      * Create a new notification instance.
@@ -21,7 +22,9 @@ class VerificationCodeNotification extends Notification
      */
     public function __construct()
     {
-        $this->code = rand(000000,999999);
+        $this->code = rand(000000, 999999);
+
+        $this->hashed = Hash::make($this->code);
     }
 
     /**
@@ -44,9 +47,9 @@ class VerificationCodeNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('Your Activation Code is : '. $this->code)
-                    ->action('Activation Link',route('activation', $this->code))
-                    ->line('Thank you for using our application!');
+            ->line('Your Activation Code is : ' . $this->code)
+            ->action('Activation Link', route('activation', $this->hashed))
+            ->line('Thank you for using our application!');
     }
 
     /**
